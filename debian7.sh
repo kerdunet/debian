@@ -83,30 +83,26 @@ service nginx restart
 cd
 
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/openvpn.tar"
+wget -O /etc/openvpn/openvpn.tar "https://raw.github.com/yurisshOS/debian7os/master/openvpn-debian.tar"
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/1194-client.conf"
+wget -O /etc/openvpn/1194.conf "https://raw.github.com/yurisshOS/debian7os/master/1194.conf"
 service openvpn restart
 sysctl -w net.ipv4.ip_forward=1
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
-wget -O /etc/iptables.up.rules "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/iptables.up.rules"
+wget -O /etc/iptables.up.rules "https://raw.github.com/yurisshOS/debian7os/master/iptables.up.rules"
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
-MYIP=`curl icanhazip.com`;
-MYIP2="s/xxxxxxxxx/$MYIP/g";
-sed -i 's/port 1194/port 6500/g' /etc/openvpn/1194.conf
 sed -i $MYIP2 /etc/iptables.up.rules;
 iptables-restore < /etc/iptables.up.rules
 service openvpn restart
 
 # configure openvpn client config
 cd /etc/openvpn/
-wget -O /etc/openvpn/1194-client.ovpn "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/1194-client.conf"
+wget -O /etc/openvpn/1194-client.ovpn "https://raw.github.com/yurisshOS/debian7os/master/1194-client.conf"
 sed -i $MYIP2 /etc/openvpn/1194-client.ovpn;
-sed -i 's/1194/6500/g' /etc/openvpn/1194-client.ovpn
 PASS=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 15 | head -n 1`;
 useradd -M -s /bin/false kerdunet.top
-echo "admin:$PASS" | chpasswd
+echo "aditya:$PASS" | chpasswd
 echo "username" >> pass.txt
 echo "password" >> pass.txt
 tar cf client.tar 1194-client.ovpn pass.txt
