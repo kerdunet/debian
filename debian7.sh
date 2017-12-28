@@ -216,11 +216,15 @@ wget -O menu "https://raw.githubusercontent.com/kerdunet/debian/master/menu.sh"
 wget -O monssh "https://raw.githubusercontent.com/kerdunet/debian/master/monssh.sh"
 wget -O userlimit "https://raw.githubusercontent.com/kerdunet/debian/master/userlimit.sh"
 wget -O userlist "https://raw.githubusercontent.com/kerdunet/debian/master/userlist.sh"
+wget -O speedtest "https://raw.githubusercontent.com/kerdunet/debian/master/speedtest_cli.py"
+echo "python /usr/bin/speedtest.py --share" | tee speedtest
 
 chmod +x menu
 chmod +x monssh
 chmod +x userlimit
 chmod +x userlist
+chmod +x speedtest
+chmod +x speedtest_cli.py
 cd
 
  # finishing
