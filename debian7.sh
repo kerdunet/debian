@@ -214,13 +214,14 @@ echo "0 */48 * * * root /sbin/reboot" > /etc/cron.d/reboot
 echo "0 */1 * * * root echo 3 > /proc/sys/vm/drop_caches" > /etc/cron.d/clearcaches
 
 # skrip
-cd /usr/bin
+cd /usr/local/bin
 wget -O menu "https://raw.githubusercontent.com/kerdunet/debian/master/menu.sh"
 wget -O monssh "https://raw.githubusercontent.com/kerdunet/debian/master/monssh.sh"
 wget -O userlimit "https://raw.githubusercontent.com/kerdunet/debian/master/userlimit.sh"
 wget -O userlist "https://raw.githubusercontent.com/kerdunet/debian/master/userlist.sh"
 wget -O speedtest "https://raw.githubusercontent.com/kerdunet/debian/master/speedtest_cli.py"
 echo "python /usr/bin/speedtest.py --share" | tee speedtest
+wget -O speedtest "https://raw.githubusercontent.com/kerdunet/debian/master/speedtest_cli.py"
 
 chmod +x menu
 chmod +x monssh
