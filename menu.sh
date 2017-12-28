@@ -82,7 +82,7 @@ function used_data(){
 
 clear
 PS3='Please enter your choice: '
-options=("Add User" "Renew User" "Delete User" "Cek Userlogin" "User List" "Ram Status" "Users Not Expired" "Expired Users" "Autokill" "Quit")
+options=("Add User" "Renew User" "Delete User" "Cek Userlogin" "User List" "Ram Status" "User Yg Belum Exp" "User Yg Sudah Exp" "Autokill" "Cek Kecepatan Server" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -112,16 +112,20 @@ do
             cat /tmp/ramcache | grep -v "Swap"
             break
             ;;	
-		"Users Not Expired")
+		"User Yg Belum Exp")
 			not_expired_users
 			break
 			;;
-		"Expired Users")
+		"User Yg Sudah Exp")
 			expired_users
 			break
 			;;
 		"Autokill")
 			userlimit 2
+			break
+			;;
+		"Cek Kecepatan Server")
+		        speedtest --share
 			break
 			;;
         "Quit")
