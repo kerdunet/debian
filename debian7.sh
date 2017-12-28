@@ -80,32 +80,38 @@ wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/kerdunet/d
 sed -i 's/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
 service php5-fpm restart
 service nginx restart
+cd
 
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/IlhamArrouf/IlhamGanteng/master/openvpn-debian.tar"
+wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/openvpn.tar"
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/IlhamArrouf/IlhamGanteng/master/1194.conf"
+wget -O /etc/openvpn/1194.conf "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/1194-client.conf"
 service openvpn restart
 sysctl -w net.ipv4.ip_forward=1
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
-wget -O /etc/iptables.up.rules "https://raw.githubusercontent.com/IlhamArrouf/IlhamGanteng/master/iptables.up.rules"
+wget -O /etc/iptables.up.rules "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/iptables.up.rules"
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
+MYIP=`curl icanhazip.com`;
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+sed -i 's/port 1194/port 6500/g' /etc/openvpn/1194.conf
 sed -i $MYIP2 /etc/iptables.up.rules;
 iptables-restore < /etc/iptables.up.rules
 service openvpn restart
 
 # configure openvpn client config
 cd /etc/openvpn/
-wget -O /etc/openvpn/1194-client.ovpn "https://raw.githubusercontent.com/IlhamArrouf/IlhamGanteng/master/1194-client.conf"
+wget -O /etc/openvpn/1194-client.ovpn "https://raw.githubusercontent.com/adammau2/auto-debian7/master/conf/1194-client.conf"
 sed -i $MYIP2 /etc/openvpn/1194-client.ovpn;
+sed -i 's/1194/6500/g' /etc/openvpn/1194-client.ovpn
 PASS=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 15 | head -n 1`;
-useradd -M -s /bin/false www.kerdunet.top
+useradd -M -s /bin/false kerdunet.top
 echo "admin:$PASS" | chpasswd
 echo "username" >> pass.txt
 echo "password" >> pass.txt
 tar cf client.tar 1194-client.ovpn pass.txt
 cp client.tar /home/vps/public_html/
+cp 1194-client.ovpn /home/vps/public_html/
 cd
 
 # badvpn
@@ -194,13 +200,14 @@ sed -i $MYIP2 /etc/squid3/squid.conf;
 service squid3 restart
 # webmin
 cd
-wget http://prdownloads.sourceforge.net/webadmin/webmin_1.850_all.deb
-dpkg -i webmin_1.850_all.deb
-apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python
-apt-get -f install
-apt-get -y -f install libxml-parser-perl
+wget "http://prdownloads.sourceforge.net/webadmin/webmin_1.820_all.deb"
+dpkg --install webmin_1.820_all.deb;
+apt-get -y -f install;
+rm /root/webmin_1.820_all.deb
 sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
 service webmin restart
+service vnstat restart
+
 # autoreboot
 echo "*/10 * * * * root service dropbear restart" > /etc/cron.d/dropbear
 echo "*/10 * * * * root service squid3 restart" > /etc/cron.d/squid3
